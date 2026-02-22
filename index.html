@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -13,7 +13,7 @@
     <meta property="og:site_name" content="ESP Web Tools" />
     <meta
       property="og:url"
-      content="https://esphome.github.io/esp-web-tools/"
+      content="https://mrkiet.name.vn/esp-web-tools/"
     />
     <meta property="og:type" content="website" />
     <meta
@@ -22,7 +22,7 @@
     />
     <meta
       property="og:image"
-      content="https://esphome.github.io/esp-web-tools/static/social.png"
+      content="https://mrkiet.name.vn/esp-web-tools/static/social.png"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="ESP Web Tools" />
@@ -32,14 +32,13 @@
     />
     <meta
       name="twitter:image"
-      content="https://esphome.github.io/esp-web-tools/static/social.png"
+      content="https://mrkiet.name.vn/esp-web-tools/static/social.png"
     />
     <meta name="color-scheme" content="dark light" />
     <style>
       body {
-        font-family:
-          -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Ubuntu, sans-serif;
+        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Ubuntu, sans-serif;
         padding: 0;
         margin: 0;
         line-height: 1.4;
@@ -80,10 +79,8 @@
       }
       .screenshot img {
         max-width: 100%;
-        box-shadow:
-          rgb(0 0 0 / 20%) 0px 2px 1px -1px,
-          rgb(0 0 0 / 14%) 0px 1px 1px 0px,
-          rgb(0 0 0 / 12%) 0px 1px 3px 0px;
+        box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px,
+          rgb(0 0 0 / 14%) 0px 1px 1px 0px, rgb(0 0 0 / 12%) 0px 1px 3px 0px;
         border-radius: 4px;
       }
       .screenshot i {
@@ -132,24 +129,21 @@
         }
       }
     </style>
-    <script
-      type="module"
-      src="https://unpkg.com/@justinribeiro/lite-youtube@1.4.0/lite-youtube.js"
-    ></script>
     <script module>
       import(
-        // In development we import locally.
+        // We import locally for this test repo setup. For use in real scenarios, use with the commented line!
         window.location.hostname === "localhost"
           ? "/dist/web/install-button.js"
-          : "https://unpkg.com/esp-web-tools/dist/web/install-button.js?module"
+          : "./js/modules/install-button.js"
+          //: "https://unpkg.com/tasmota-esp-web-tools/dist/web/install-button.js?module"
       );
     </script>
   </head>
   <body>
     <div class="content">
-      <h1>ESP Web Tools</h1>
+      <h1>ESP Web Tools next generation</h1>
       <p>
-        User friendly tools to manage ESP8266 and ESP32 devices in the browser:
+        User friendly tools to manage ESP8266 and ESP32 devices in the browser on <strong>Desktop and Android</strong>:
       </p>
       <ul>
         <li>Install &amp; update firmware</li>
@@ -160,13 +154,11 @@
           Add devices to
           <a href="https://www.home-assistant.io">Home Assistant</a>
         </li>
+        <li>
+          <strong>🆕 Manage LittleFS filesystems</strong> - Upload, download, and organize files
+        </li>
+        <li>Flashing from Android mobile devices</li>
       </ul>
-      <div class="videoWrapper">
-        <lite-youtube
-          videoid="E8bdATqXM8c"
-          videotitle="ESP Web Tools in action"
-        ></lite-youtube>
-      </div>
 
       <h2 id="demo">Try a live demo</h2>
       <p>
@@ -174,8 +166,21 @@
         <a href="https://esphome.io">ESPHome</a>. To get started, connect an ESP
         device to your computer and hit the button:
       </p>
+      <p>
+        <label for="baudRate" style="font-weight: 600;">Flash Speed:</label>
+        <select id="baudRate" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; cursor: pointer; min-width: 200px; margin-left: 10px;">
+          <option value="">115200 Baud (Default)</option>
+          <option value="230400">230400 Baud</option>
+          <option value="460800">460800 Baud</option>
+          <option value="921600">921600 Baud</option>
+          <option value="1500000">1500000 Baud</option>
+          <option value="2000000" selected>2000000 Baud (Recommended)</option>
+        </select>
+      </p>
       <esp-web-install-button
-        manifest="https://firmware.esphome.io/esp-web-tools/manifest.json"
+        id="installButton"
+        manifest="https://firmware.esphome.io/esphome-web/manifest.json"
+        baud-rate="2000000"
       >
         <i slot="unsupported">
           The demo is not available because your browser does not support Web
@@ -189,12 +194,6 @@
 
       <h2 id="used-by">Products using ESP Web Tools</h2>
       <div class="projects">
-        <a href="https://install.wled.me" target="_blank" class="project">
-          <div class="logo">
-            <img src="static/logos/wled.png" alt="WLED logo" />
-          </div>
-          <div class="name">WLED</div>
-        </a>
         <a
           href="https://arendst.github.io/Tasmota-firmware/"
           target="_blank"
@@ -211,6 +210,12 @@
           </div>
           <div class="name">ESPEasy</div>
         </a>
+        <a href="https://install.wled.me" target="_blank" class="project">
+          <div class="logo">
+            <img src="static/logos/wled.png" alt="WLED logo" />
+          </div>
+          <div class="name">WLED</div>
+        </a>
         <a
           href="https://canair.io/installer.html"
           target="_blank"
@@ -220,12 +225,6 @@
             <img src="static/logos/canairio.png" alt="CanAirIO logo" />
           </div>
           <div class="name">CanAirIO</div>
-        </a>
-        <a href="https://web.esphome.io" target="_blank" class="project">
-          <div class="logo">
-            <img src="static/logos/esphome.svg" alt="ESPHome logo" />
-          </div>
-          <div class="name">ESPHome</div>
         </a>
         <a
           href="https://sle118.github.io/squeezelite-esp32-installer/"
@@ -269,59 +268,11 @@
           </div>
           <div class="name">Luciferin</div>
         </a>
-        <a
-          href="https://install.openepaperlink.de"
-          target="_blank"
-          class="project"
-        >
+        <a href="https://web.esphome.io" target="_blank" class="project">
           <div class="logo">
-            <img
-              src="static/logos/openepaperlink.png"
-              alt="OpenEpaperLink logo"
-            />
+            <img src="static/logos/esphome.svg" alt="ESPHome logo" />
           </div>
-          <div class="name">OpenEpaperLink</div>
-        </a>
-        <a href="https://openspool.io" target="_blank" class="project">
-          <div class="logo">
-            <img src="static/logos/openspool.png" alt="OpenSpool logo" />
-          </div>
-          <div class="name">OpenSpool</div>
-        </a>
-        <a href="https://usetrmnl.com/flash" target="_blank" class="project">
-          <div class="logo">
-            <img src="static/logos/trmnl.png" alt="TRMNL logo" />
-          </div>
-          <div class="name">TRMNL</div>
-        </a>
-        <a href="https://nspanelmanager.com" target="_blank" class="project">
-          <div class="logo">
-            <img
-              src="static/logos/nspanelmanager.svg"
-              alt="NSPanelManager logo"
-            />
-          </div>
-          <div class="name">NSPanel Manager</div>
-        </a>
-        <a
-          href="https://github.com/blak3r/treadspan"
-          target="_blank"
-          class="project"
-        >
-          <div class="logo">
-            <img src="static/logos/treadspan.png" alt="Treadspan logo" />
-          </div>
-          <div class="name">TreadSpan</div>
-        </a>
-        <a
-          href="https://opendisplay.org/firmware/install"
-          target="_blank"
-          class="project"
-        >
-          <div class="logo">
-            <img src="static/logos/opendisplay.png" alt="OpenDisplay logo" />
-          </div>
-          <div class="name">OpenDisplay</div>
+          <div class="name">ESPHome</div>
         </a>
       </div>
 
@@ -339,7 +290,7 @@
         Web Serial is available in Google Chrome and Microsoft Edge
         browsers<span class="not-supported-i hidden">
           (but not on your iOS device)</span
-        >. Android support should be possible but has not been implemented yet.
+        >. <strong>Android is now fully supported</strong> using WebUSB with Chrome 61+ and USB OTG.
       </p>
 
       <h3 id="improv">Configuring Wi-Fi</h3>
@@ -390,7 +341,7 @@
         Web Tools button HTML.
       </p>
       <p>
-        <a href="https://github.com/balloob/squeezelite-esp32-install"
+        <a href="https://tasmota.github.io/install/"
           >Click here to see a full example.</a
         >
       </p>
@@ -401,12 +352,12 @@
       <pre>
 &lt;script
   type="module"
-  src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"
+  src="https://unpkg.com/tasmota-esp-web-tools/dist/web/install-button.js?module"
 >&lt;/script></pre
       >
       <p>
         (If you prefer to locally host the JavaScript,
-        <a href="https://unpkg.com/browse/esp-web-tools/dist/web/"
+        <a href="https://unpkg.com/browse/tasmota-esp-web-tools/dist/web/"
           >download it here</a
         >)
       </p>
@@ -417,9 +368,25 @@
       </p>
       <pre>
 &lt;esp-web-install-button
-  manifest="https://firmware.esphome.io/esp-web-tools/manifest.json"
+  manifest="https://firmware.esphome.io/esphome-web/manifest.json"
 >&lt;/esp-web-install-button></pre
       >
+      <p>
+        <b>Optional:</b> Configure flash speed (baud rate) for faster flashing.
+        By default, 115200 baud is used for maximum compatibility. You can increase
+        the speed by adding the <code>baud-rate</code> attribute:
+      </p>
+      <pre>
+&lt;esp-web-install-button
+  manifest="https://firmware.esphome.io/esphome-web/manifest.json"
+  baud-rate="2000000"
+>&lt;/esp-web-install-button></pre
+      >
+      <p>
+        Available baud rates: <code>230400</code>, <code>460800</code>, 
+        <code>921600</code>, <code>1500000</code>, <code>2000000</code> (recommended for modern chips).
+        Higher speeds are ~17x faster but require compatible USB-Serial chips.
+      </p>
       <p>
         <b>Note:</b> ESP Web Tools requires that your website is served over
         <code>https://</code> to work. This is a Web Serial security
@@ -440,15 +407,10 @@
 
       <p>
         ESP Web Tools can also be integrated in your projects by installing it
-        <a href="https://www.npmjs.com/package/esp-web-tools">via NPM</a>.
+        <a href="https://www.npmjs.com/package/tasmota-esp-web-tools">via NPM</a
+        >.
       </p>
       <h3 id="preparing-firmware">Preparing your firmware</h3>
-      <p>
-        If you have ESP32 firmware and are using ESP-IDF framework v4 or later,
-        you will need to create a merged version of your firmware before being
-        able to use it with ESP Web Tools. If you use ESP8266 or ESP32 with
-        ESP-IDF v3 or earlier, you can skip this section.
-      </p>
       <p>
         ESP32 firmware is split into 4 different files. When these files are
         installed using the command-line tool <code>esptool</code>, it will
@@ -462,11 +424,11 @@
         command:
       </p>
       <pre>
-esptool --chip esp32 merge_bin \
+esptool --chip esp32 merge-bin \
   -o merged-firmware.bin \
-  --flash_mode dio \
-  --flash_freq 40m \
-  --flash_size 4MB \
+  --flash-mode dio \
+  --flash-freq 40m \
+  --flash-size 4MB \
   0x1000 bootloader.bin \
   0x8000 partitions.bin \
   0xe000 boot.bin \
@@ -484,9 +446,10 @@ esptool --chip esp32 merge_bin \
         install. It allows specifying different builds for the different types
         of ESP devices. Current supported chip families are
         <code>ESP8266</code>, <code>ESP32</code>, <code>ESP32-C2</code>,
-        <code>ESP32-C3</code>, <code>ESP32-C5</code>, <code>ESP32-C6</code>, <code>ESP32-C61</code>,
-        <code>ESP32-H2</code>, <code>ESP32-P4</code>, <code>ESP32-S2</code> and <code>ESP32-S3</code>. The correct build will
-        be automatically selected based on the type of the connected ESP device.
+        <code>ESP32-C3</code>, <code>ESP32-C5</code>, <code>ESP32-C6</code>,
+        <code>ESP32-C61</code>, <code>ESP32-S2</code>, <code>ESP32-S3</code>,
+        <code>ESP32-H2</code> and <code>ESP32-P4</code>.
+        The correct build will be automatically selected based on type of the connected device.
       </p>
       <pre>
 {
@@ -570,49 +533,6 @@ button.overrides = {
 };</pre
       >
 
-      <h4>Generating a manifest dynamically &amp; version management</h4>
-      <p>
-        Alternatively to a static manifest JSON file, you can generate a Blob
-        URL of a JSON object using
-        <a
-          href="https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static"
-          ><code>URL.createObjectURL</code></a
-        >
-        to use as the manifest url. This can be useful in situations where you
-        have many firmware bin files, e.g. previous software versions, where you
-        don't want to have a different static manifest json file for each bin.
-        If you are hosting on github.io, this can be paired nicely with
-        <a
-          href="https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#get-contents"
-          >github's REST API</a
-        >
-        to view all the bin files inside a folder.
-      </p>
-      <pre>
-const manifest = {
-    "name": name,
-    "version": version,
-    "funding_url": funding_url,
-    "new_install_prompt_erase": true,
-    "builds": [
-        {
-            "chipFamily": "ESP32",
-            "improv": false,
-            "parts": [
-                { "path": dependenciesDir+"bootloader.bin", "offset": 4096 },
-                { "path": dependenciesDir+"partitions.bin", "offset": 32768 },
-                { "path": dependenciesDir+"boot_app0.bin", "offset": 57344 },
-                { "path": firmwareFile, "offset": 65536 }
-            ]
-        }
-    ]
-}
-
-const json = JSON.stringify(manifest);
-const blob = new Blob([json], {type: "application/json"});
-document.querySelector("esp-web-install-button").manifest = URL.createObjectURL(blob);
-      </pre>
-
       <h3 id="customize">Customizing the look and feel</h3>
       <p>
         You can change the colors of the default UI elements with CSS custom
@@ -621,7 +541,6 @@ document.querySelector("esp-web-install-button").manifest = URL.createObjectURL(
       <ul>
         <li><code>--esp-tools-button-color</code></li>
         <li><code>--esp-tools-button-text-color</code></li>
-        <li><code>--esp-tools-button-border-radius</code></li>
       </ul>
       <p>There are also some attributes that can be used for styling:</p>
       <table>
@@ -645,7 +564,7 @@ document.querySelector("esp-web-install-button").manifest = URL.createObjectURL(
       </p>
       <pre>
 &lt;esp-web-install-button
-  manifest="https://firmware.esphome.io/esp-web-tools/manifest.json"
+  manifest="https://firmware.esphome.io/esphome-web/manifest.json"
 >
   &lt;button slot="activate">Custom install button&lt;/button>
   &lt;span slot="unsupported">Ah snap, your browser doesn't work!&lt;/span>
@@ -653,42 +572,33 @@ document.querySelector("esp-web-install-button").manifest = URL.createObjectURL(
 &lt;/esp-web-install-button>
     </pre
       >
-
-      <h2>Why we created ESP Web Tools</h2>
-      <div class="videoWrapper">
-        <lite-youtube
-          videoid="6ZMXE5PXPqU"
-          videotitle="Why we created ESP Web Tools"
-          videoStartAt="1255"
-        ></lite-youtube>
-      </div>
-
       <div class="footer">
         <div class="initiative">
-          ESP Web Tools is a project by
-          <a href="https://esphome.io">ESPHome</a>,
-          <a href="https://www.openhomefoundation.org">Open Home Foundation</a
-          >.<br />
-          Development is funded by
-          <a href="https://www.nabucasa.com">Nabu Casa</a>.
-        </div>
-        <div>
           ESP Web Tools is
-          <a href="https://github.com/esphome/esp-web-tools">open source</a>.
+          <a href="https://github.com/jason2866/esp-web-tools">open source</a>
         </div>
       </div>
     </div>
     <script>
-      {
-        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-          document.querySelector(".not-supported-i").classList.remove("hidden");
-        }
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        document.querySelector(".not-supported-i").classList.remove("hidden");
+      }
 
-        const search = new URLSearchParams(window.location.search);
-        if (search.has("manifest")) {
-          const button = document.querySelector("esp-web-install-button");
-          button.manifest = search.get("manifest");
-        }
+      // Baud rate selection
+      const baudRateSelect = document.getElementById('baudRate');
+      const installButton = document.getElementById('installButton');
+
+      if (baudRateSelect && installButton) {
+        baudRateSelect.addEventListener('change', function() {
+          const selectedRate = this.value;
+          
+          // Update install button
+          if (selectedRate === '') {
+            installButton.removeAttribute('baud-rate');
+          } else {
+            installButton.setAttribute('baud-rate', selectedRate);
+          }
+        });
       }
     </script>
   </body>

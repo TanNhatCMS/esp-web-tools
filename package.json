@@ -1,37 +1,50 @@
 {
-  "name": "esp-web-tools",
-  "version": "0.0.0",
+  "name": "tasmota-esp-web-tools",
+  "version": "11.1.9",
   "description": "Web tools for ESP devices",
   "main": "dist/install-button.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/esphome/esp-web-tools"
+    "url": "git+https://github.com/Jason2866/esp-web-tools.git"
   },
-  "author": "ESPHome maintainers",
+  "author": "ESPHome maintainers & Jason2866",
   "license": "Apache-2.0",
   "scripts": {
-    "prepublishOnly": "script/build"
+    "format": "npm exec -- prettier --write src",
+    "build": "script/build",
+    "lint": "eslint src/",
+    "lintAndFix": "eslint src/ --fix",
+    "develop": "script/develop"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.26.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/w3c-web-serial": "^1.0.7",
-    "prettier": "^3.4.2",
-    "rollup": "^4.29.1",
+    "eslint": "^9.39.2",
+    "@eslint/js": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.7.3",
+    "rollup": "^4.53.5",
     "serve": "^14.2.4",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.52.0"
   },
   "dependencies": {
-    "@material/web": "^2.2.0",
-    "esptool-js": "^0.5.7",
+    "@material/mwc-button": "^0.27.0",
+    "@material/mwc-checkbox": "^0.27.0",
+    "@material/mwc-circular-progress": "^0.27.0",
+    "@material/mwc-dialog": "^0.27.0",
+    "@material/mwc-formfield": "^0.27.0",
+    "@material/mwc-icon-button": "^0.27.0",
+    "@material/mwc-textfield": "^0.27.0",
     "improv-wifi-serial-sdk": "^2.5.0",
-    "lit": "^3.2.1",
-    "pako": "^2.1.0",
+    "lit": "^2.8.0",
+    "tasmota-webserial-esptool": "^9.2.19",
     "tslib": "^2.8.1"
   }
 }

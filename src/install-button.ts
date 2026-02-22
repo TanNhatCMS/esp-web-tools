@@ -1,23 +1,29 @@
 import type { FlashState } from "./const";
 import type { EwtInstallDialog } from "./install-dialog";
 import { connect } from "./connect";
+import { corsProxyFetch } from "./util/cors-proxy";
+
+// Expose corsProxyFetch globally for external scripts
+(window as any).espWebToolsCorsProxyFetch = corsProxyFetch;
 
 export class InstallButton extends HTMLElement {
-  public static isSupported = "serial" in navigator;
+  public static isSupported = "serial" in navigator || "usb" in navigator;
 
   public static isAllowed = window.isSecureContext;
+
+  public static observedAttributes = ["baud-rate"];
 
   private static style = `
   button {
     position: relative;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
-    padding: 10px 24px;
+    padding: 8px 28px;
     color: var(--esp-tools-button-text-color, #fff);
     background-color: var(--esp-tools-button-color, #03a9f4);
     border: none;
-    border-radius: var(--esp-tools-button-border-radius, 9999px);
+    border-radius: 4px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
   }
   button::before {
     content: " ";
@@ -27,7 +33,10 @@ export class InstallButton extends HTMLElement {
     left: 0;
     right: 0;
     opacity: 0.2;
-    border-radius: var(--esp-tools-button-border-radius, 9999px);
+    border-radius: 4px;
+  }
+  button:hover {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,.14), 0 1px 7px 0 rgba(0,0,0,.12), 0 3px 1px -1px rgba(0,0,0,.2);
   }
   button:hover::before {
     background-color: rgba(255,255,255,.8);
@@ -48,11 +57,17 @@ export class InstallButton extends HTMLElement {
     cursor: unset;
     pointer-events: none;
   }
+  improv-wifi-launch-button {
+    display: block;
+    margin-top: 16px;
+  }
   .hidden {
     display: none;
   }`;
 
   public manifest?: string;
+
+  public firmwareFile?: File;
 
   public eraseFirst?: boolean;
 
@@ -62,11 +77,24 @@ export class InstallButton extends HTMLElement {
 
   public logConsole?: boolean;
 
+  public baudRate?: number;
+
   public state?: FlashState;
 
   public renderRoot?: ShadowRoot;
 
   public overrides: EwtInstallDialog["overrides"];
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    if (name === "baud-rate" && newValue !== oldValue) {
+      if (!newValue) {
+        this.baudRate = undefined;
+      } else {
+        const parsed = parseInt(newValue, 10);
+        this.baudRate = Number.isNaN(parsed) ? undefined : parsed;
+      }
+    }
+  }
 
   public connectedCallback() {
     if (this.renderRoot) {
@@ -79,7 +107,7 @@ export class InstallButton extends HTMLElement {
       this.toggleAttribute("install-unsupported", true);
       this.renderRoot.innerHTML = !InstallButton.isAllowed
         ? "<slot name='not-allowed'>You can only install ESP devices on HTTPS websites or on the localhost.</slot>"
-        : "<slot name='unsupported'>Your browser does not support installing things on ESP devices. Use Google Chrome or Microsoft Edge.</slot>";
+        : "<slot name='unsupported'>Your browser does not support installing things on ESP devices. Use Google Chrome or Microsoft Edge (Desktop) or Chrome on Android with USB OTG.</slot>";
       return;
     }
 
@@ -94,7 +122,7 @@ export class InstallButton extends HTMLElement {
 
     slot.name = "activate";
     const button = document.createElement("button");
-    button.innerText = "Connect";
+    button.innerText = "CONNECT";
     slot.append(button);
     if (
       "adoptedStyleSheets" in Document.prototype &&
