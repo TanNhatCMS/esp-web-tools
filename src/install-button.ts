@@ -140,4 +140,6 @@ export class InstallButton extends HTMLElement {
   }
 }
 
-customElements.define("esp-web-install-button", InstallButton);
+if (!customElements.get("esp-web-install-button")) {
+  customElements.define("esp-web-install-button", InstallButton);
+}

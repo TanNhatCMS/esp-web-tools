@@ -104,4 +104,6 @@ InstallButton.style = `
   .hidden {
     display: none;
   }`;
-customElements.define("esp-web-install-button", InstallButton);
+if (!customElements.get("esp-web-install-button")) {
+    customElements.define("esp-web-install-button", InstallButton);
+}
