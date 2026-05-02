@@ -121,6 +121,9 @@ export class EwtInstallDialog extends LitElement {
   // Track if device is using USB-JTAG or USB-OTG (not external serial chip)
   @state() private _isUsbJtagOrOtgDevice = false;
 
+  // Detected flash size (e.g., "4MB", "8MB")
+  @state() private _flashSize?: string;
+
   // Track action to perform after port reconnection (for USB-JTAG/OTG devices)
   private _openConsoleAfterReconnect = false;
   private _visitDeviceAfterReconnect = false;
@@ -198,6 +201,9 @@ export class EwtInstallDialog extends LitElement {
     );
     this._espStub = espStub;
 
+    // Detect flash size AFTER stub creation (flash size is only available after stub)
+    await this._probeFlashSize(espStub);
+
     // Set baudrate BEFORE any operations (use user-selected baudrate if available)
     if (this.baudRate && this.baudRate > 115200) {
       this.logger.log(`Setting baudrate to ${this.baudRate}...`);
@@ -226,6 +232,19 @@ export class EwtInstallDialog extends LitElement {
   // Helper to get port from esploader
   private get _port(): SerialPort {
     return this.esploader.port;
+  }
+
+  // Helper to probe flash size from a running stub (only available after stub)
+  private async _probeFlashSize(espStub: any): Promise<void> {
+    if (espStub.detectFlashSize && !this._flashSize) {
+      try {
+        await espStub.detectFlashSize();
+        this._flashSize = espStub.flashSize;
+        this.logger.log(`Flash size detected: ${this._flashSize}`);
+      } catch (err: any) {
+        this.logger.debug("Failed to detect flash size:", err);
+      }
+    }
   }
 
   // Helper to check if device is using USB-JTAG or USB-OTG (not external serial chip)
@@ -621,17 +640,18 @@ export class EwtInstallDialog extends LitElement {
 
   _renderDashboard(): [string, TemplateResult, boolean, boolean] {
     const heading = this._info!.name;
-    let content: TemplateResult;
     const hideActions = true;
     const allowClosing = true;
 
-    content = html`
+    const content = html`
       <ew-list>
         <ew-list-item>
           <div slot="headline">Connected to ${this._info!.name}</div>
           <div slot="supporting-text">
             ${this._info!.firmware}&nbsp;${this._info!.version}
-            (${this._info!.chipFamily})
+            (${this._info!.chipFamily}${this._flashSize
+              ? `, ${this._flashSize}`
+              : ""})
           </div>
         </ew-list-item>
         ${!this._isSameVersion
@@ -1007,12 +1027,27 @@ export class EwtInstallDialog extends LitElement {
 
   _renderDashboardNoImprov(): [string, TemplateResult, boolean, boolean] {
     const heading = "Device Dashboard";
-    let content: TemplateResult;
     const hideActions = true;
     const allowClosing = true;
 
-    content = html`
+    // Build device info string if available
+    const chipFamily = this.esploader.chipFamily
+      ? getChipFamilyName(this.esploader)
+      : null;
+    const deviceInfo = chipFamily
+      ? `(${chipFamily}${this._flashSize ? `, ${this._flashSize}` : ""})`
+      : null;
+
+    const content = html`
       <ew-list>
+        ${deviceInfo
+          ? html`
+              <ew-list-item>
+                <div slot="headline">${chipFamily}</div>
+                <div slot="supporting-text">${deviceInfo}</div>
+              </ew-list-item>
+            `
+          : ""}
         <ew-list-item
           type="button"
           ?disabled=${this._busy}
@@ -1479,11 +1514,20 @@ export class EwtInstallDialog extends LitElement {
     } else if (!this._installConfirmed) {
       heading = "Confirm Installation";
       const action = isUpdate ? "update to" : "install";
+      // Build device info with flash size if available
+      const deviceInfo = this._flashSize
+        ? html` (${this._info?.chipFamily || ""}${this._info?.chipFamily
+            ? `, ${this._flashSize}`
+            : this._flashSize})`
+        : "";
       content = html`
         ${isUpdate
           ? html`Your device is running
-              ${this._info!.firmware}&nbsp;${this._info!.version}.<br /><br />`
-          : ""}
+              ${this._info!.firmware}&nbsp;${this._info!
+                .version}${deviceInfo}.<br /><br />`
+          : deviceInfo
+            ? html`Device detected: ${deviceInfo}<br /><br />`
+            : ""}
         Do you want to ${action}
         ${this._manifest.name}&nbsp;${this._manifest.version}?
         ${this._installErase
@@ -1507,7 +1551,11 @@ export class EwtInstallDialog extends LitElement {
       this._installState.state === FlashStateType.PREPARING
     ) {
       heading = "Installing";
-      content = this._renderProgress("Preparing installation");
+      // Show flash size in preparing message if available
+      const preparingMsg = this._installState?.flashSize
+        ? `Preparing installation (${this._installState.flashSize})`
+        : "Preparing installation";
+      content = this._renderProgress(preparingMsg);
       hideActions = true;
     } else if (this._installState.state === FlashStateType.ERASING) {
       heading = "Installing";
@@ -1591,10 +1639,9 @@ export class EwtInstallDialog extends LitElement {
 
   _renderLogs(): [string | undefined, TemplateResult, boolean] {
     const heading: string | undefined = `Logs`;
-    let content: TemplateResult;
     const hideActions = false;
 
-    content = html`
+    const content = html`
       <ew-console
         .port=${this._port}
         .logger=${this.logger}
@@ -1668,7 +1715,22 @@ export class EwtInstallDialog extends LitElement {
         >
       `;
     } else {
+      // Build device info with flash size for partition view
+      const chipFamily = this.esploader.chipFamily
+        ? getChipFamilyName(this.esploader)
+        : null;
+      const deviceInfo = chipFamily
+        ? `${chipFamily}${this._flashSize ? `, ${this._flashSize}` : ""}`
+        : null;
       content = html`
+        ${deviceInfo
+          ? html`<div
+              class="device-info"
+              style="margin-bottom: 16px; font-size: 14px; color: var(--md-sys-color-on-surface-variant, #666);"
+            >
+              Device: ${deviceInfo}
+            </div>`
+          : ""}
         <div class="partition-list">
           <table class="partition-table">
             <thead>
@@ -2089,6 +2151,9 @@ export class EwtInstallDialog extends LitElement {
             this.logger.log(`Stub created: IS_STUB=${this._espStub.IS_STUB}`);
           }
 
+          // Detect flash size after stub is running
+          await this._probeFlashSize(this._espStub);
+
           // CRITICAL: Save parent loader
           const loaderToSave = this._espStub._parent || this._espStub;
           (this as any)._savedLoaderBeforeConsole = loaderToSave;
@@ -2487,6 +2552,8 @@ export class EwtInstallDialog extends LitElement {
   private _handleDisconnect = () => {
     this._state = "ERROR";
     this._error = "Disconnected";
+    // Reset flash size when device is actually disconnected
+    this._flashSize = undefined;
   };
 
   private async _handleSelectNewPort() {
@@ -2980,6 +3047,8 @@ export class EwtInstallDialog extends LitElement {
       await this._closeClientWithoutEvents(this._client);
     }
     document.body.style.overflow = this._bodyOverflow ?? "";
+    // Reset flash size when dialog is closed
+    this._flashSize = undefined;
     fireEvent(this, "closed" as any);
     this.parentNode!.removeChild(this);
   }
