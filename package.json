@@ -1,6 +1,6 @@
 {
   "name": "tasmota-esp-web-tools",
-  "version": "12.2.2",
+  "version": "12.2.3",
   "description": "Web tools for ESP devices",
   "main": "dist/install-button.js",
   "repository": {
@@ -26,20 +26,20 @@
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/w3c-web-serial": "^1.0.8",
-    "eslint": "^9.39.2",
+    "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "prettier": "^3.8.3",
     "rollup": "^4.60.2",
     "serve": "^14.2.6",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.59.1"
+    "typescript-eslint": "^8.59.4"
   },
   "dependencies": {
     "@material/web": "2.2.0",
     "improv-wifi-serial-sdk": "2.5.0",
-    "lit": "^3.3.2",
-    "tasmota-webserial-esptool": "^9.2.21",
+    "lit": "^3.3.3",
+    "tasmota-webserial-esptool": "^9.2.23",
     "tslib": "^2.8.1"
   }
 }
